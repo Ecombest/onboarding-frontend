@@ -16,18 +16,139 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 }
+
+body {
+  background-color: aliceblue;
+}
+
+.sidebar {
+  background: linear-gradient(to bottom,
+      rgb(var(--background-start-rgb)),
+      rgb(var(--background-end-rgb)));
+}
+
+.side-bar-btn {
+  margin-left: auto;
+  margin-right: 10px;
+  margin-top: 10px;
+  position: relative;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.side-bar-btn>* {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background-color: black;
+  border-radius: 4px;
+  transition: transform 0.3s, top 0.3s, opacity 0.3s;
+  opacity: 1;
+
+}
+
+.side-bar-btn>*:nth-child(1) {
+  top: 0;
+}
+
+.side-bar-btn>*:nth-child(2) {
+  top: 12px;
+}
+
+.side-bar-btn>*:nth-child(3) {
+  top: 24px;
+}
+
+
+.side-bar-btn.open>*:nth-child(1) {
+  transform: rotate(45deg);
+  top: 12px;
+}
+
+.side-bar-btn.open>*:nth-child(2) {
+  transform: rotate(-45deg);
+  top: 12px;
+}
+
+.side-bar-btn.open>*:nth-child(3) {
+  opacity: 0;
+}
+
+.create-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 0;
+  width: 0;
+  position: fixed;
+  top: 0;
+  right: 0;
+
+
+}
+
+.create-box.open {}
+
+.create-box-content {
+  padding: 10px;
+  width: 400px;
+  height: max-content;
+  background-color: white;
+  border-radius: 10px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  transform: scaleX(0) scaleY(0);
+  transform-origin: top right;
+  transition: transform 0.3s;
+
+
+}
+
+.create-box-content.open {
+  transform: scaleX(1) scaleY(1);
+}
+
+.create-option>input {
+  margin: 10px;
+  width: calc(100% - 20px);
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.create-option>strong {
+  font-size: 1.2rem;
+}
+
+.create-option>button {
+  display: block;
+  margin: 10px;
+  margin-left: auto;
+  width: max-content;
+  padding: 6px 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.create-option>button:hover {
+  background-color: green;
+  color: #fff;
+}
+
+@import url('../styles/page.module.css');
+@import url('../styles/categories.module.css');
+@import url('../styles/blogs.module.css');

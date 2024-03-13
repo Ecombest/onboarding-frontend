@@ -1,0 +1,28 @@
+.categories {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: sticky;
+    top: 20px;
+}
+
+.category {
+    color: #090909;
+    width: max-content;
+    height: max-content;
+    font-weight: 600;
+    padding: 10px 16px;
+    font-size: 18px;
+    border-radius: 0.5em;
+    background: #ffffff;
+    cursor: pointer;
+    border: 1px solid #ffffff;
+    transition: all 0.3s;
+    box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+    transition: box-shadow 0.4s, color 0.3s, transform 0.3s;
+}
+
+.category:hover {
+    color: #666;
+    box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
+}
