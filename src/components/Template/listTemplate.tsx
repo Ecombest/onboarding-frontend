@@ -16,7 +16,7 @@ export default function ListTemplate(props: { isRefesh: boolean, setIsRefesh: Re
   const [templates, setTemplates] = React.useState([])
 
   React.useEffect(() => {
-    fetch('http://192.168.1.222:3000/template')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/template`)
       .then(res => res.json())
       .then(templates => {
         setTemplates(templates)
@@ -24,7 +24,7 @@ export default function ListTemplate(props: { isRefesh: boolean, setIsRefesh: Re
   }, [props.isRefesh])
 
   const handleDelTemplate = (template) => {
-    fetch(`http://192.168.1.222:3000/template/${template.id}`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/template/${template.id}`, {
       method: 'DELETE'
     })
       .then(() => {

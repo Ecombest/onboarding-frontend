@@ -8,13 +8,7 @@ import ImageCanvas from '@/components/Form/image'
 export default function AdminOption() {
     return (
         <div>
-            {/* <h1 className="text-xl md:text-5xl text-center font-bold py-20">Home Page</h1> */}
-            {/* <AdminCreateOption></AdminCreateOption> */}
-            {/* <AddTemplate></AddTemplate> */}
             <MenuBar></MenuBar>
-            {/* <ListTemplate></ListTemplate> */}
-            {/* <EditTemplate></EditTemplate> */}
-            {/* <ImageCanvas></ImageCanvas> */}
         </div>
     )
 }

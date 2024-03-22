@@ -1,6 +1,6 @@
 "use client";
 import { BiUserPlus } from 'react-icons/bi'
-import React from "react";
+import React, { ChangeEvent } from "react";
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
@@ -37,6 +37,32 @@ const VisuallyHiddenInput = styled('input')({
 export default function AddTemplate(props: { setIsRefesh: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [isShowModal, setIsShowModal] = React.useState(false)
     const [formAd, setFormAd] = React.useState({})
+    const [file, setFile] = React.useState<File | null>(null);
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setFile(file);
+    };
+
+    const uploadFile = async (file: File) => {
+        const selectedFile = file;
+        if (!selectedFile) return;
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        formData.append("upload_preset", "vitamim"); // Replace with your Cloudinary upload preset
+
+        return await fetch("https://api.cloudinary.com/v1_1/vitamim/image/upload", {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                return data.url;
+            })
+            .catch((error) => {
+                console.error("Error uploading file:", error);
+            });
+    };
 
     const router = useRouter()
 
@@ -55,31 +81,27 @@ export default function AddTemplate(props: { setIsRefesh: React.Dispatch<React.S
         })
     }
 
-    const handleFileAd = (e: any) => {
-        setFormAd({
-            ...formAd,
-            'imageUrl': e.target.files[0].name
-        })
-    }
 
-    const handleSubmit = (e: any) => {
-        fetch('http://192.168.1.222:3000/template', {
-            method: 'POST',
+    const handleSubmit = async () => {
+        const imageUrl = await uploadFile(file);
+        console.log(imageUrl);
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/template`, {
+            method: "POST",
             headers: {
-                'content-Type': 'application/json'
+                "content-Type": "application/json",
             },
             body: JSON.stringify({
                 ...formAd,
                 width: Number(formAd.width),
-                height: Number(formAd.height)
-            })
-        })
-            .then(() => {
-                toast.success('Create successfull !')
-                props.setIsRefesh((prev) => !prev)
-            })
-        setIsShowModal(false)
-    }
+                height: Number(formAd.height),
+                imageUrl: imageUrl,
+            }),
+        }).then(() => {
+            toast.success("Create successfull !");
+            props.setIsRefesh((prev) => !prev);
+        });
+        setIsShowModal(false);
+    };
 
     return (
         <div>
@@ -122,7 +144,7 @@ export default function AddTemplate(props: { setIsRefesh: React.Dispatch<React.S
                                 startIcon={<ImageIcon />}
                             >
                                 Upload image
-                                <VisuallyHiddenInput name="file" onChange={handleFileAd} type="file" accept='image/png, image/jpeg' />
+                                <VisuallyHiddenInput name="file" onChange={handleFileChange} type="file" accept='image/png, image/jpeg' />
                             </Button>
                         </div>
                     </Typography>

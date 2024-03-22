@@ -40,12 +40,14 @@ export default function MenuBar() {
                                 {/* </Link> */}
                             </ListItem>
                             <ListItem disablePadding>
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <SettingsIcon></SettingsIcon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={'Options'} />
-                                </ListItemButton>
+                                <Link href="/listOptionSet">
+                                    <ListItemButton>
+                                        <ListItemIcon>
+                                            <SettingsIcon></SettingsIcon>
+                                        </ListItemIcon>
+                                        <ListItemText primary={'Options'} />
+                                    </ListItemButton>
+                                </Link>
                             </ListItem>
                         </List>
                     </Box>
