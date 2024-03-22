@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import MenuBar from "@/components/Menu";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,9 +19,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body
+        className={inter.className}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
         <ToastContainer />
-        {children}
+        <MenuBar />
+        <div
+          style={{
+            width: "calc(100% - 200px)",
+          }}
+        >
+          {children}
+        </div>
       </body>
     </html>
   );

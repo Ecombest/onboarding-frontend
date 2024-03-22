@@ -81,10 +81,15 @@
 }
 
 .sidebar-home {
-    flex-basis: 5%;
     min-height: 100vh;
+    width: 100%;
     height: max-content;
     background-color: #fff;
+    border-right: 1px solid #c1bcbc;
+}
+
+.sidebar-home a {
+    width: 100%;
 }
 
 .text-home {
