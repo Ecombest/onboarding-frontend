@@ -29,10 +29,8 @@ export default function ImageCanvas(props: {
         width: props.template.width,
         height: props.template.height,
       } as unknown as fabric.IRectOptions);
-      console.log(rect);
       canvas.add(rect);
     }
-    console.log("background");
     canvas?.renderAll();
     return () => {
       if (canvas) canvas?.dispose();

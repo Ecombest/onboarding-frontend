@@ -131,7 +131,7 @@ export default function AddTemplate(props: { setIsRefesh: React.Dispatch<React.S
     <div>
       <div className="container mx-auto flex justdify-between py-5 border-b">
         <div className="left flex gap-3">
-          <button onClick={showModal} className="flex bg-blue-500 text-white px-4 py-2 border rounded-md">
+          <button onClick={showModal} className="flex bg-blue-500 text-white px-4 py-2 ml-2 border rounded-md">
             Add template{" "}
             <span className="px-1">
               <BiUserPlus size={22}></BiUserPlus>
