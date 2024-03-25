@@ -228,7 +228,7 @@
     padding: 10px;
 }
 
-.right-bar span.template-item {
+.right-bar .template-item {
     color: #000;
     padding: 4px 10px;
     margin-bottom: 0px;
@@ -236,6 +236,10 @@
     font-size: 18px;
 }
 
-.right-bar span.template-item:hover {
+.right-bar .template-item:hover {
     background-color: #bbf1ff;
+}
+
+.margin-left {
+    margin-left: 30px;
 }
