@@ -13,9 +13,9 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 800,
+    width: 1000,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
+    border: '1px solid #000',
     boxShadow: 24,
     p: 4,
 };
@@ -71,7 +71,7 @@ export default function ListOption() {
                 </div>
             </div>
             <Modal
-                open={isShowModalCreate}
+                // open={isShowModalCreate}
                 onClose={cancelModalCreate}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -164,6 +164,30 @@ export default function ListOption() {
                         cursor: 'pointer',
                         borderRadius: '12px',
                     }}>Create</button>
+                </Box>
+            </Modal>
+            <Modal
+                open={isShowModalCreate}
+                onClose={cancelModalCreate}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        <div>
+                            Select an template
+                        </div>
+                        <div className='w-full h-full flex'>
+                            <div>
+                                Template
+                            </div>
+                            <div>
+                                Layers
+                            </div>
+                        </div>
+
+                    </Typography>
+
                 </Box>
             </Modal>
         </div>
