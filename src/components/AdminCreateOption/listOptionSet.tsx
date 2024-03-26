@@ -57,7 +57,7 @@ export default function ListOptionSet(props: { isRefesh: boolean, setIsRefesh: R
                                 <TableCell align="center">{optionSet.updatedAt}</TableCell>
                                 <TableCell align="center">0</TableCell>
                                 <TableCell align="center">
-                                    <Link href={'/editOptionSet'}>
+                                    <Link href={`/editOptionSet/${optionSet.id}`}>
                                         <Button className="cursor"><BiEdit size={22}></BiEdit></Button>
                                     </Link>
                                     <Button onClick={() => { handleDelTemplate(optionSet) }} className="cursor"><BiTrashAlt size={22}></BiTrashAlt></Button>
