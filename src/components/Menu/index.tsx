@@ -10,51 +10,52 @@ import FilterIcon from "@mui/icons-material/Filter";
 import Link from "next/link";
 
 export default function MenuBar() {
-    return (
-        <div
-            style={{
-                width: "200px",
-            }}
-        >
-            <div className="header text-home">Home page</div>
-            <div className="main-content">
-                <div className="sidebar-home">
-                    <Box role="presentation">
-                        <List>
-                            <ListItem disablePadding>
-                                <Link href="/listTemplate">
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <BrushIcon></BrushIcon>
-                                        </ListItemIcon>
-                                        <ListItemText primary={"Templates"} />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
-                            <ListItem disablePadding>
-                                {/* <Link href="/listTemplate"> */}
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <FilterIcon></FilterIcon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={"Clip arts"} />
-                                </ListItemButton>
-                                {/* </Link> */}
-                            </ListItem>
-                            <ListItem disablePadding>
-                                <Link href="/listOptionSet">
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <SettingsIcon></SettingsIcon>
-                                        </ListItemIcon>
-                                        <ListItemText primary={"Options"} />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
-                        </List>
-                    </Box>
-                </div>
-            </div>
+  return (
+    <div
+      style={{
+        width: "200px",
+        height: "calc(100vh - 6rem)",
+      }}
+    >
+      <div className="header text-home">Home page</div>
+      <div className="main-content">
+        <div className="sidebar-home">
+          <Box role="presentation">
+            <List>
+              <ListItem disablePadding>
+                <Link href="/listTemplate">
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <BrushIcon></BrushIcon>
+                    </ListItemIcon>
+                    <ListItemText primary={"Templates"} />
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+              <ListItem disablePadding>
+                {/* <Link href="/listTemplate"> */}
+                <ListItemButton>
+                  <ListItemIcon>
+                    <FilterIcon></FilterIcon>
+                  </ListItemIcon>
+                  <ListItemText primary={"Clip arts"} />
+                </ListItemButton>
+                {/* </Link> */}
+              </ListItem>
+              <ListItem disablePadding>
+                <Link href="/listOptionSet">
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <SettingsIcon></SettingsIcon>
+                    </ListItemIcon>
+                    <ListItemText primary={"Options"} />
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+            </List>
+          </Box>
         </div>
-    );
+      </div>
+    </div>
+  );
 }

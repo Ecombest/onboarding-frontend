@@ -9,6 +9,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import { styled } from "@mui/material/styles";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { TemplateInterface } from "./editTemplate";
 
 const style = {
   position: "absolute" as "absolute",
@@ -36,7 +37,7 @@ const VisuallyHiddenInput = styled("input")({
 
 export default function AddTemplate(props: { setIsRefesh: React.Dispatch<React.SetStateAction<boolean>> }) {
   const [isShowModal, setIsShowModal] = React.useState(false);
-  const [formAd, setFormAd] = React.useState({});
+  const [formAd, setFormAd] = React.useState<TemplateInterface>({} as TemplateInterface);
   const [file, setFile] = React.useState<File | null>(null);
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -56,7 +57,7 @@ export default function AddTemplate(props: { setIsRefesh: React.Dispatch<React.S
 
   useEffect(() => {
     if (!isShowModal) {
-      setFormAd({});
+      setFormAd({} as TemplateInterface);
       setFile(null);
     }
   }, [isShowModal]);
@@ -99,6 +100,10 @@ export default function AddTemplate(props: { setIsRefesh: React.Dispatch<React.S
   };
 
   const handleSubmit = async () => {
+    if (!file) {
+      toast.error("Please upload image !");
+      return;
+    }
     const imageUrl = await uploadFile(file);
     console.log(imageUrl);
     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/template`, {

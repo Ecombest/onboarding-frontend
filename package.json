@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --port 1505",
     "build": "next build",
-    "start": "next start",
+    "start": "next start  --port 1505",
     "lint": "next lint"
   },
   "dependencies": {

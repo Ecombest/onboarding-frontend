@@ -1,9 +1,10 @@
 "use client";
 import { fabric } from "fabric";
 import React from "react";
+import { TemplateInterface } from "../Template/editTemplate";
 
 export default function ImageCanvas(props: {
-  template: Object;
+  template: TemplateInterface;
   id_current: React.MutableRefObject<any>;
   setnewFabricCanvas: any;
 }) {

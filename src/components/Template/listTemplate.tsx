@@ -11,12 +11,13 @@ import { BiEdit, BiTrashAlt, BiUserPlus } from "react-icons/bi";
 import Button from "@mui/material/Button";
 import Link from "next/link";
 import { toast } from "react-toastify";
+import { TemplateInterface } from "./editTemplate";
 
 export default function ListTemplate(props: {
   isRefesh: boolean;
   setIsRefesh: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [templates, setTemplates] = React.useState([]);
+  const [templates, setTemplates] = React.useState<TemplateInterface[]>([]);
 
   React.useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/template`)
@@ -26,7 +27,7 @@ export default function ListTemplate(props: {
       });
   }, [props.isRefesh]);
 
-  const handleDelTemplate = (template) => {
+  const handleDelTemplate = (template: TemplateInterface) => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/template/${template.id}`, {
       method: "DELETE",
     }).then(() => {

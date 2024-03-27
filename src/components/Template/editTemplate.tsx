@@ -21,11 +21,17 @@ const VisuallyHiddenInput = styled("input")({
   whiteSpace: "nowrap",
   width: 1,
 });
-
+export interface TemplateInterface {
+  name: string;
+  id: string;
+  width: number;
+  height: number;
+  imageUrl: string;
+}
 export default function EditTemplate(props: { id: string }) {
-  const [template, setTemplate] = React.useState({});
+  const [template, setTemplate] = React.useState<TemplateInterface>({} as TemplateInterface);
   const id_current = React.useRef(null);
-  const [newFabricCanvas, setnewFabricCanvas] = React.useState(null);
+  const [newFabricCanvas, setnewFabricCanvas] = React.useState<fabric.Canvas | null>(null);
   const [listLayer, setListLayer] = React.useState([{}]);
 
   React.useEffect(() => {
@@ -55,7 +61,7 @@ export default function EditTemplate(props: { id: string }) {
             height: layer.height,
             id: layer.id,
           } as unknown as fabric.IRectOptions);
-          newFabricCanvas.add(rect);
+          newFabricCanvas?.add(rect);
         });
       });
   }, [props.id, newFabricCanvas]);
@@ -68,7 +74,7 @@ export default function EditTemplate(props: { id: string }) {
       width: 200,
       height: 200,
     });
-    newFabricCanvas.add(rect);
+    newFabricCanvas?.add(rect);
     const newListLayer = [
       ...listLayer,
       {
@@ -79,7 +85,8 @@ export default function EditTemplate(props: { id: string }) {
   };
 
   const handleFormLayer = () => {
-    const newListCanvas = newFabricCanvas.getObjects().slice(1);
+    const newListCanvas = newFabricCanvas?.getObjects().slice(1);
+    if (!newListCanvas) return;
     const newForm = newListCanvas.map((item: any) => ({
       id: item.id ? item.id : null,
       templateId: template.id,

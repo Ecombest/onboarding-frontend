@@ -31,6 +31,7 @@ export default function RootLayout({
         <div
           style={{
             width: "calc(100% - 200px)",
+            height: "calc(100vh - 6rem)",
           }}
         >
           {children}
