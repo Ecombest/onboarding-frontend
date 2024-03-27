@@ -19,6 +19,7 @@ export default function ImageCanvas(props: {
         oImg.scaleX = props.template.width / width;
         oImg.scaleY = props.template.height / height;
         canvas.add(oImg);
+        canvas.sendToBack(oImg);
       });
     } else {
       const rect = new fabric.Rect({
