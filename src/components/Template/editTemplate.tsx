@@ -33,6 +33,7 @@ export default function EditTemplate(props: { id: string }) {
   const id_current = React.useRef(null);
   const [newFabricCanvas, setnewFabricCanvas] = React.useState<fabric.Canvas | null>(null);
   const [listLayer, setListLayer] = React.useState([{}]);
+  const [changeType, setChangeType] = React.useState(null)
 
   React.useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/template/${props.id}`, {
@@ -66,13 +67,14 @@ export default function EditTemplate(props: { id: string }) {
       });
   }, [props.id, newFabricCanvas]);
 
-  const draw = () => {
+  const draw = (value) => {
     const rect = new fabric.Rect({
       fill: "white",
       top: 100,
       left: 100,
       width: 200,
       height: 200,
+      name: "Image Placeholder"
     });
     newFabricCanvas?.add(rect);
     const newListLayer = [
@@ -82,6 +84,27 @@ export default function EditTemplate(props: { id: string }) {
       },
     ];
     setListLayer(newListLayer);
+    setChangeType(value)
+  };
+
+  const drawClipArt = (value) => {
+    const rect = new fabric.Rect({
+      fill: "white",
+      top: 100,
+      left: 100,
+      width: 200,
+      height: 200,
+      name: "Clipart"
+    });
+    newFabricCanvas?.add(rect);
+    const newListLayer = [
+      ...listLayer,
+      {
+        name: "Clipart",
+      },
+    ];
+    setListLayer(newListLayer);
+    setChangeType(value)
   };
 
   const handleFormLayer = () => {
@@ -94,7 +117,7 @@ export default function EditTemplate(props: { id: string }) {
       top: item.top,
       width: (item.width / 2) * item.zoomX,
       height: (item.height / 2) * item.zoomY,
-      name: "Image Placeholder",
+      name: item.name,
       angle: Number(0),
     }));
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/layer/list`, {
@@ -118,7 +141,12 @@ export default function EditTemplate(props: { id: string }) {
               <span className="">Layers</span>
             </div>
 
-            {listLayer.map((layer: any, index) => (
+            {changeType === 'image' ? listLayer.map((layer: any, index) => (
+              <div className="flex px-5 py-4 border" key={index}>
+                <span className="w-30">{index + 1}</span>
+                <span className="px-2">{layer.name}</span>
+              </div>
+            )) : listLayer.map((layer: any, index) => (
               <div className="flex px-5 py-4 border" key={index}>
                 <span className="w-30">{index + 1}</span>
                 <span className="px-2">{layer.name}</span>
@@ -139,7 +167,7 @@ export default function EditTemplate(props: { id: string }) {
               <div className="px-3 py-3">
                 <div className="border w-20 h-20 rounded-lg flex justify-center items-center hover:bg-layer cursor-pointer">
                   <div className="text-center text-sm">
-                    <div>
+                    <div onClick={() => { drawClipArt('clip-art') }}>
                       <FilterIcon></FilterIcon>
                     </div>
                     Clip art
@@ -147,7 +175,7 @@ export default function EditTemplate(props: { id: string }) {
                 </div>
               </div>
               <div className="px-3 py-3">
-                <button onClick={draw}>
+                <button onClick={() => { draw('image') }}>
                   <div className="border w-20 h-20 rounded-lg flex justify-center items-center hover:bg-layer cursor-pointer">
                     <div className="text-center text-sm">
                       <div>
@@ -161,19 +189,23 @@ export default function EditTemplate(props: { id: string }) {
             </div>
             <div className="py-4">
               <div className="px-3">
-                <div className="collapse-title min-h-0 bg-layer text-white p-3">Config</div>
-                {/* <div className="py-3">
-                  <Button
-                    component="label"
-                    role={undefined}
-                    variant="contained"
-                    tabIndex={-1}
-                    startIcon={<ImageIcon />}
-                  >
-                    Upload image
-                    <VisuallyHiddenInput type="file" />
-                  </Button>
-                </div> */}
+
+                {changeType === "clip-art" ? <div>
+                  <div className="collapse-title min-h-0 bg-layer text-white p-3">Config</div>
+                  <span>Category</span>
+                  <input style={{
+                    border: "3px",
+                    borderColor: "black",
+                    padding: "3px",
+                    marginTop: '5px'
+                  }} type="text"></input>
+                  <span>Option</span>
+                  <input style={{
+                    border: '2px',
+                    padding: "3px",
+                    marginTop: '5px'
+                  }} type="number"></input>
+                </div> : <></>}
               </div>
             </div>
             <div className="px-3 position-absolute">
