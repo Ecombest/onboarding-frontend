@@ -73,7 +73,7 @@ export default function EditTemplate(props: { id: string }) {
   };
   const [isShowCateModal, setIsShowCateModal] = React.useState(false);
   const [selectedCategory, setSelectedCategory] = useState(CATEGORY[0]);
-
+  console.log(currentLayer);
   React.useEffect(() => {
     newFabricCanvas?.on("selection:created", function (event) {
       let selectedObjects = event.selected as unknown as FabricObjectInterface[];
@@ -187,26 +187,25 @@ export default function EditTemplate(props: { id: string }) {
     setCurrentLayer({
       name: "Clipart",
       id: newId,
-    })
+    });
     setListLayer(newListLayer);
     setChangeType(value);
   };
 
   const addCategory = (category) => {
-    setSelectedCategory(category)
-    const curLayer = listLayer.find(layer => layer.id == currentLayer.id)
+    setSelectedCategory(category);
+    const curLayer = listLayer.find((layer) => layer.id == currentLayer.id);
     const newListLayer = [
-      ...listLayer.filter(layer => layer.id !== currentLayer.id),
+      ...listLayer.filter((layer) => layer.id !== currentLayer.id),
       {
         ...curLayer,
         idCategory: category._id,
-        nameCategory: category.name
-      }
-
+        nameCategory: category.name,
+      },
     ] as LayerInterface[];
     setListLayer(newListLayer);
-    setIsShowCateModal(false)
-  }
+    setIsShowCateModal(false);
+  };
 
   const handleFormLayer = () => {
     const newListCanvas = newFabricCanvas?.getObjects().slice(1);
@@ -222,7 +221,7 @@ export default function EditTemplate(props: { id: string }) {
       name: item.name,
       angle: Number(0),
     }));
-    console.log(newForm)
+    console.log(newForm);
     // fetch(`${process.env.NEXT_PUBLIC_API_URL}/layer/list`, {
     //   method: "POST",
     //   headers: {
@@ -322,14 +321,14 @@ export default function EditTemplate(props: { id: string }) {
                     <span>Category</span>
                     <input
                       style={{
-                        border: "3px",
-                        borderColor: "black",
+                        border: "1px dashed black",
                         padding: "3px",
                         marginTop: "5px",
                       }}
                       type="text"
+                      placeholder="Select category"
                       onClick={showModalCate}
-                      value={selectedCategory.name}
+                      value={currentLayer.nameCategory || ""}
                     ></input>
                   </div>
                 ) : (
@@ -345,7 +344,13 @@ export default function EditTemplate(props: { id: string }) {
           </div>
         </div>
       </div>
-      <ClipArtModel addCategory={addCategory} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} isShowCateModal={isShowCateModal} cancelShowModalCate={cancelShowModalCate}></ClipArtModel>
+      <ClipArtModel
+        addCategory={addCategory}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        isShowCateModal={isShowCateModal}
+        cancelShowModalCate={cancelShowModalCate}
+      ></ClipArtModel>
     </div>
   );
 }
@@ -355,19 +360,19 @@ const ClipArtModel = ({
   cancelShowModalCate,
   selectedCategory,
   setSelectedCategory,
-  addCategory
+  addCategory,
 }: {
   isShowCateModal: boolean;
   cancelShowModalCate: () => void;
   addCategory: (category) => void;
   selectedCategory: {
-    _id: string,
-    name: string
+    _id: string;
+    name: string;
   };
   setSelectedCategory: {
-    _id: string,
-    name: string
-  }
+    _id: string;
+    name: string;
+  };
 }) => {
   // const [selectedCategory, setSelectedCategory] = useState(CATEGORY[0]);
 
