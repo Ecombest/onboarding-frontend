@@ -1,4 +1,4 @@
-import { Category } from "./categories.interface";
+import { CategoryInterface } from "./categories.interface";
 
 export interface Blog {
   title: string;
@@ -8,5 +8,5 @@ export interface Blog {
   content: string;
   _id: string;
   __v: number;
-  category: Category;
+  category: CategoryInterface;
 }

@@ -19,6 +19,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { CategoryInterface } from "@/interface/categories.interface";
 const boxStyle = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -39,7 +40,7 @@ export interface TemplateInterface {
   imageUrl: string;
 }
 export interface LayerInterface {
-  id: number;
+  id: number | string;
   name: string;
   advances: number;
   top: number;
@@ -52,6 +53,8 @@ export interface LayerInterface {
   templateID: number;
   createdAt: Date;
   updatedAt: Date;
+  nameCategory: string;
+  idCategory: string;
 }
 
 export interface FabricObjectInterface {
@@ -66,14 +69,13 @@ export default function EditTemplate(props: { id: string }) {
   const [listLayer, setListLayer] = React.useState<LayerInterface[]>([{}] as LayerInterface[]);
   const [changeType, setChangeType] = React.useState<string | null>(null);
   const [currentLayer, setCurrentLayer] = React.useState<LayerInterface>({} as LayerInterface);
-  const handleCurrentSelectedLayer = (layerId: number) => {
+  const handleCurrentSelectedLayer = (layerId: number | string) => {
     const selectedLayer = listLayer.find((layer) => layer.id === layerId);
     if (!selectedLayer) return;
     setCurrentLayer(selectedLayer);
   };
   const [isShowCateModal, setIsShowCateModal] = React.useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(CATEGORY[0]);
-  console.log(currentLayer);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryInterface>(CATEGORY[0] as CategoryInterface);
   React.useEffect(() => {
     newFabricCanvas?.on("selection:created", function (event) {
       let selectedObjects = event.selected as unknown as FabricObjectInterface[];
@@ -187,22 +189,24 @@ export default function EditTemplate(props: { id: string }) {
     setCurrentLayer({
       name: "Clipart",
       id: newId,
-    });
+    } as LayerInterface);
     setListLayer(newListLayer);
     setChangeType(value);
   };
 
-  const addCategory = (category) => {
-    setSelectedCategory(category);
-    const curLayer = listLayer.find((layer) => layer.id == currentLayer.id);
-    const newListLayer = [
-      ...listLayer.filter((layer) => layer.id !== currentLayer.id),
-      {
-        ...curLayer,
-        idCategory: category._id,
-        nameCategory: category.name,
-      },
-    ] as LayerInterface[];
+  const addCategory = (category: CategoryInterface) => {
+    const newListLayer = listLayer.map((layer) => {
+      if (layer.id === currentLayer.id) {
+        return {
+          ...layer,
+          idCategory: category._id,
+          nameCategory: category.name,
+        };
+      }
+      return layer;
+    }) as LayerInterface[];
+    const curLayer = newListLayer.find((layer) => layer.id === currentLayer.id) as LayerInterface;
+    setCurrentLayer(curLayer);
     setListLayer(newListLayer);
     setIsShowCateModal(false);
   };
@@ -364,15 +368,9 @@ const ClipArtModel = ({
 }: {
   isShowCateModal: boolean;
   cancelShowModalCate: () => void;
-  addCategory: (category) => void;
-  selectedCategory: {
-    _id: string;
-    name: string;
-  };
-  setSelectedCategory: {
-    _id: string;
-    name: string;
-  };
+  addCategory: (category: CategoryInterface) => void;
+  selectedCategory: CategoryInterface;
+  setSelectedCategory: (category: CategoryInterface) => void;
 }) => {
   // const [selectedCategory, setSelectedCategory] = useState(CATEGORY[0]);
 
@@ -405,7 +403,7 @@ const ClipArtModel = ({
                         fontSize: "16px",
                         background: selectedCategory._id === category._id ? "#f0f0f0" : "#fff",
                       }}
-                      onClick={() => setSelectedCategory(category)}
+                      onClick={() => setSelectedCategory(category as CategoryInterface)}
                       key={index}
                     >
                       {category.name}
@@ -494,7 +492,7 @@ const ClipArtModel = ({
             cursor: "pointer",
             borderRadius: "12px",
           }}
-          onClick={() => addCategory(selectedCategory)}
+          onClick={() => addCategory(selectedCategory as CategoryInterface)}
         >
           Select
         </button>
