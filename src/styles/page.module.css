@@ -198,6 +198,24 @@
     border-right: 1px solid #c1bcbc;
 }
 
+.choose-template-box .category-bar {
+    flex-grow: 1;
+    flex-shrink: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 10px;
+    border-right: 1px solid #c1bcbc;
+}
+
+.category-bar span.category-item {
+    color: #000;
+    padding: 4px 10px;
+    margin-bottom: 0px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
 .choose-template-box .left-bar input {
     width: 100%;
     border: 1px solid #c1bcbc;

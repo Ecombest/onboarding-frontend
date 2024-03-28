@@ -10,17 +10,27 @@ import ImageCanvas from "../Form/image";
 import { fabric } from "fabric";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
+import { Box, Modal, Typography } from "@mui/material";
+import { CLIP_ART } from "@/constanst/clipart.const";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+const boxStyle = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 1200,
+  bgcolor: "background.paper",
+  border: "1px solid #000",
+  boxShadow: 24,
+  p: 2,
+  backGroundColor: "#f0f0f0",
+};
 export interface TemplateInterface {
   name: string;
   id: string;
@@ -61,6 +71,7 @@ export default function EditTemplate(props: { id: string }) {
     if (!selectedLayer) return;
     setCurrentLayer(selectedLayer);
   };
+  const [isShowCateModal, setIsShowCateModal] = React.useState(false)
 
   React.useEffect(() => {
     newFabricCanvas?.on("selection:created", function (event) {
@@ -191,6 +202,14 @@ export default function EditTemplate(props: { id: string }) {
     });
   };
 
+  const showModalCate = () => {
+    setIsShowCateModal(true)
+  }
+
+  const cancelShowModalCate = () => {
+    setIsShowCateModal(false)
+  }
+
   return (
     <div>
       <div className="flex flex-col h-full">
@@ -277,6 +296,7 @@ export default function EditTemplate(props: { id: string }) {
                         marginTop: "5px",
                       }}
                       type="text"
+                      onClick={showModalCate}
                     ></input>
                     <span>Option</span>
                     <input
@@ -301,6 +321,65 @@ export default function EditTemplate(props: { id: string }) {
           </div>
         </div>
       </div>
+      <Modal open={isShowCateModal} onClose={cancelShowModalCate} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Box sx={boxStyle}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            <div className="choose-template-box">
+              <h2>Select an category</h2>
+              <div className="w-full h-full flex p-2 white">
+                <div className="category-bar" style={{
+                  height: "60vh",
+                  overflowY: "auto"
+                }}>
+                  <span>Cliparts</span>
+                  <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>OptionId</TableCell>
+                          <TableCell align="center">Image</TableCell>
+                          <TableCell align="center">Thumbnail</TableCell>
+                          <TableCell align="center">Name</TableCell>
+                          <TableCell align="center">Url</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+
+                        <TableRow key="x" sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                          <TableCell component="th" scope="row">
+                            name
+                          </TableCell>
+                          <TableCell align="center">1</TableCell>
+                          <TableCell align="center">1</TableCell>
+                          <TableCell align="center">1</TableCell>
+                        </TableRow>
+
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </div>
+
+              </div>
+            </div>
+          </Typography>
+          <button
+            style={{
+              backgroundColor: "green",
+              color: "white",
+              textAlign: "center",
+              padding: "20px",
+              display: "inline-block",
+              fontSize: "16px",
+              margin: "4px 2px",
+              cursor: "pointer",
+              borderRadius: "12px",
+            }}
+            onClick={cancelShowModalCate}
+          >
+            Cancel
+          </button>
+        </Box>
+      </Modal>
     </div>
   );
 }
