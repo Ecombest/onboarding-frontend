@@ -119,7 +119,10 @@ export default function EditTemplate(props: { id: string }) {
         setListLayer(listLayer);
         listLayer.map((layer: any) => {
           const rect = new fabric.Rect({
-            fill: "white",
+            fill: "transparent",
+            strokeWidth: 1,
+            stroke: "black",
+            strokeDashArray: [5, 5],
             top: layer.top,
             left: layer.left,
             width: layer.width,
@@ -134,11 +137,14 @@ export default function EditTemplate(props: { id: string }) {
   const draw = (value: string) => {
     const newId = uuidv4();
     const rect = new fabric.Rect({
-      fill: "white",
+      fill: "transparent",
       top: 100,
       left: 100,
       width: 200,
       height: 200,
+      strokeWidth: 1,
+      stroke: "black",
+      strokeDashArray: [5, 5],
       name: "Image Placeholder",
       id: newId,
     } as unknown as fabric.IRectOptions);
@@ -158,11 +164,14 @@ export default function EditTemplate(props: { id: string }) {
     const newId = uuidv4();
 
     const rect = new fabric.Rect({
-      fill: "white",
+      fill: "transparent",
       top: 100,
       left: 100,
       width: 200,
       height: 200,
+      strokeWidth: 1,
+      stroke: "black",
+      strokeDashArray: [5, 5],
       name: "Clipart",
       id: newId,
     } as unknown as fabric.IRectOptions);
@@ -182,7 +191,7 @@ export default function EditTemplate(props: { id: string }) {
     const newListCanvas = newFabricCanvas?.getObjects().slice(1);
     if (!newListCanvas) return;
     const newForm = newListCanvas.map((item: any) => ({
-      id: item.id ? item.id : null,
+      id: Number(item.id) ? item.id : null,
       templateId: template.id,
       left: item.left,
       top: item.top,
