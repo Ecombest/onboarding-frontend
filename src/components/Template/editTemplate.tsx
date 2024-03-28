@@ -72,6 +72,7 @@ export default function EditTemplate(props: { id: string }) {
     setCurrentLayer(selectedLayer);
   };
   const [isShowCateModal, setIsShowCateModal] = React.useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(CATEGORY[0]);
 
   React.useEffect(() => {
     newFabricCanvas?.on("selection:created", function (event) {
@@ -183,14 +184,35 @@ export default function EditTemplate(props: { id: string }) {
         id: newId,
       },
     ] as LayerInterface[];
+    setCurrentLayer({
+      name: "Clipart",
+      id: newId,
+    })
     setListLayer(newListLayer);
     setChangeType(value);
   };
+
+  const addCategory = (category) => {
+    setSelectedCategory(category)
+    const curLayer = listLayer.find(layer => layer.id == currentLayer.id)
+    const newListLayer = [
+      ...listLayer.filter(layer => layer.id !== currentLayer.id),
+      {
+        ...curLayer,
+        idCategory: category._id,
+        nameCategory: category.name
+      }
+
+    ] as LayerInterface[];
+    setListLayer(newListLayer);
+    setIsShowCateModal(false)
+  }
 
   const handleFormLayer = () => {
     const newListCanvas = newFabricCanvas?.getObjects().slice(1);
     if (!newListCanvas) return;
     const newForm = newListCanvas.map((item: any) => ({
+      ...listLayer.find((layer) => layer.id === item.id),
       id: Number(item.id) ? item.id : null,
       templateId: template.id,
       left: item.left,
@@ -200,15 +222,16 @@ export default function EditTemplate(props: { id: string }) {
       name: item.name,
       angle: Number(0),
     }));
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/layer/list`, {
-      method: "POST",
-      headers: {
-        "content-Type": "application/json",
-      },
-      body: JSON.stringify(newForm),
-    }).then(() => {
-      toast.success("Create successfull !");
-    });
+    console.log(newForm)
+    // fetch(`${process.env.NEXT_PUBLIC_API_URL}/layer/list`, {
+    //   method: "POST",
+    //   headers: {
+    //     "content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(newForm),
+    // }).then(() => {
+    //   toast.success("Create successfull !");
+    // });
   };
 
   const showModalCate = () => {
@@ -306,15 +329,7 @@ export default function EditTemplate(props: { id: string }) {
                       }}
                       type="text"
                       onClick={showModalCate}
-                    ></input>
-                    <span>Option</span>
-                    <input
-                      style={{
-                        border: "2px",
-                        padding: "3px",
-                        marginTop: "5px",
-                      }}
-                      type="number"
+                      value={selectedCategory.name}
                     ></input>
                   </div>
                 ) : (
@@ -330,7 +345,7 @@ export default function EditTemplate(props: { id: string }) {
           </div>
         </div>
       </div>
-      <ClipArtModel isShowCateModal={isShowCateModal} cancelShowModalCate={cancelShowModalCate}></ClipArtModel>
+      <ClipArtModel addCategory={addCategory} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} isShowCateModal={isShowCateModal} cancelShowModalCate={cancelShowModalCate}></ClipArtModel>
     </div>
   );
 }
@@ -338,11 +353,23 @@ export default function EditTemplate(props: { id: string }) {
 const ClipArtModel = ({
   isShowCateModal,
   cancelShowModalCate,
+  selectedCategory,
+  setSelectedCategory,
+  addCategory
 }: {
   isShowCateModal: boolean;
   cancelShowModalCate: () => void;
+  addCategory: (category) => void;
+  selectedCategory: {
+    _id: string,
+    name: string
+  };
+  setSelectedCategory: {
+    _id: string,
+    name: string
+  }
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState(CATEGORY[0]);
+  // const [selectedCategory, setSelectedCategory] = useState(CATEGORY[0]);
 
   return (
     <Modal
@@ -364,7 +391,7 @@ const ClipArtModel = ({
                 }}
               >
                 <div>
-                  <span>Template</span>
+                  <span>Categories</span>
                   {CATEGORY.map((category, index) => (
                     <h2
                       style={{
@@ -449,6 +476,22 @@ const ClipArtModel = ({
           onClick={cancelShowModalCate}
         >
           Cancel
+        </button>
+        <button
+          style={{
+            backgroundColor: "blue",
+            color: "white",
+            textAlign: "center",
+            padding: "20px",
+            display: "inline-block",
+            fontSize: "16px",
+            margin: "4px 2px",
+            cursor: "pointer",
+            borderRadius: "12px",
+          }}
+          onClick={() => addCategory(selectedCategory)}
+        >
+          Select
         </button>
       </Box>
     </Modal>
