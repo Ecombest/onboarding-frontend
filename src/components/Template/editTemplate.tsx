@@ -191,6 +191,7 @@ export default function EditTemplate(props: { id: string }) {
     const newListCanvas = newFabricCanvas?.getObjects().slice(1);
     if (!newListCanvas) return;
     const newForm = newListCanvas.map((item: any) => ({
+      ...listLayer.find((layer) => layer.id === item.id),
       id: Number(item.id) ? item.id : null,
       templateId: template.id,
       left: item.left,
