@@ -5,13 +5,13 @@ import Button from "@mui/material/Button";
 import ImageIcon from "@mui/icons-material/Image";
 import FilterIcon from "@mui/icons-material/Filter";
 import { styled } from "@mui/material/styles";
-import React from "react";
+import React, { useState } from "react";
 import ImageCanvas from "../Form/image";
 import { fabric } from "fabric";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 import { Box, Modal, Typography } from "@mui/material";
-import { CLIP_ART } from "@/constanst/clipart.const";
+import { CATEGORY, CLIP_ART } from "@/constanst/clipart.const";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -71,7 +71,7 @@ export default function EditTemplate(props: { id: string }) {
     if (!selectedLayer) return;
     setCurrentLayer(selectedLayer);
   };
-  const [isShowCateModal, setIsShowCateModal] = React.useState(false)
+  const [isShowCateModal, setIsShowCateModal] = React.useState(false);
 
   React.useEffect(() => {
     newFabricCanvas?.on("selection:created", function (event) {
@@ -203,12 +203,12 @@ export default function EditTemplate(props: { id: string }) {
   };
 
   const showModalCate = () => {
-    setIsShowCateModal(true)
-  }
+    setIsShowCateModal(true);
+  };
 
   const cancelShowModalCate = () => {
-    setIsShowCateModal(false)
-  }
+    setIsShowCateModal(false);
+  };
 
   return (
     <div>
@@ -321,65 +321,127 @@ export default function EditTemplate(props: { id: string }) {
           </div>
         </div>
       </div>
-      <Modal open={isShowCateModal} onClose={cancelShowModalCate} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
-        <Box sx={boxStyle}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            <div className="choose-template-box">
-              <h2>Select an category</h2>
-              <div className="w-full h-full flex p-2 white">
-                <div className="category-bar" style={{
-                  height: "60vh",
-                  overflowY: "auto"
-                }}>
+      <ClipArtModel isShowCateModal={isShowCateModal} cancelShowModalCate={cancelShowModalCate}></ClipArtModel>
+    </div>
+  );
+}
+
+const ClipArtModel = ({
+  isShowCateModal,
+  cancelShowModalCate,
+}: {
+  isShowCateModal: boolean;
+  cancelShowModalCate: () => void;
+}) => {
+  const [selectedCategory, setSelectedCategory] = useState(CATEGORY[0]);
+
+  return (
+    <Modal
+      open={isShowCateModal}
+      onClose={cancelShowModalCate}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={boxStyle}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          <div className="choose-template-box">
+            <h2>Select an category</h2>
+            <div className="w-full h-full flex p-2 white">
+              <div
+                className="category-bar"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "20% 80%",
+                }}
+              >
+                <div>
+                  <span>Template</span>
+                  {CATEGORY.map((category, index) => (
+                    <h2
+                      style={{
+                        padding: "10px",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        background: selectedCategory._id === category._id ? "#f0f0f0" : "#fff",
+                      }}
+                      onClick={() => setSelectedCategory(category)}
+                      key={index}
+                    >
+                      {category.name}
+                    </h2>
+                  ))}
+                </div>
+                <div
+                  style={{
+                    height: "60vh",
+                    overflowY: "auto",
+                  }}
+                >
                   <span>Cliparts</span>
                   <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                       <TableHead>
                         <TableRow>
                           <TableCell>OptionId</TableCell>
-                          <TableCell align="center">Image</TableCell>
                           <TableCell align="center">Thumbnail</TableCell>
                           <TableCell align="center">Name</TableCell>
                           <TableCell align="center">Url</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
+                        {CLIP_ART.filter((clip) => clip.categoryId === selectedCategory._id).map((clip, index) => (
+                          <TableRow key="x" sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                            <TableCell component="th" scope="row">
+                              {clip.optionId}
+                            </TableCell>
+                            <TableCell align="center">
+                              <img
+                                src={`https://ecb-personalize-storage.sgp1.digitaloceanspaces.com/${clip.thumbnail}`}
+                                style={{
+                                  width: "100px",
+                                  height: "100px",
+                                }}
+                              ></img>
+                            </TableCell>
 
-                        <TableRow key="x" sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                          <TableCell component="th" scope="row">
-                            name
-                          </TableCell>
-                          <TableCell align="center">1</TableCell>
-                          <TableCell align="center">1</TableCell>
-                          <TableCell align="center">1</TableCell>
-                        </TableRow>
+                            <TableCell align="center">{clip.name}</TableCell>
 
+                            <TableCell align="center">
+                              <img
+                                src={`https://ecb-personalize-storage.sgp1.digitaloceanspaces.com/${clip.urlPath}`}
+                                style={{
+                                  width: "100px",
+                                  height: "100px",
+                                }}
+                              ></img>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                       </TableBody>
                     </Table>
                   </TableContainer>
                 </div>
-
               </div>
             </div>
-          </Typography>
-          <button
-            style={{
-              backgroundColor: "green",
-              color: "white",
-              textAlign: "center",
-              padding: "20px",
-              display: "inline-block",
-              fontSize: "16px",
-              margin: "4px 2px",
-              cursor: "pointer",
-              borderRadius: "12px",
-            }}
-            onClick={cancelShowModalCate}
-          >
-            Cancel
-          </button>
-        </Box>
-      </Modal>
-    </div>
+          </div>
+        </Typography>
+        <button
+          style={{
+            backgroundColor: "green",
+            color: "white",
+            textAlign: "center",
+            padding: "20px",
+            display: "inline-block",
+            fontSize: "16px",
+            margin: "4px 2px",
+            cursor: "pointer",
+            borderRadius: "12px",
+          }}
+          onClick={cancelShowModalCate}
+        >
+          Cancel
+        </button>
+      </Box>
+    </Modal>
   );
-}
+};
