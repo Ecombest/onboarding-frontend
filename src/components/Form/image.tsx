@@ -38,6 +38,7 @@ export default function ImageCanvas(props: {
       if (canvas) canvas?.dispose();
     };
   }, [props.id_current.current, props.template.width, props.template.height, props.template.imageUrl]);
+
   return (
     <div>
       {props.template?.width && props.template?.height && (

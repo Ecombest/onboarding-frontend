@@ -9,7 +9,7 @@ import React from "react";
 import ImageCanvas from "../Form/image";
 import { fabric } from "fabric";
 import { toast } from "react-toastify";
-
+import { v4 as uuidv4 } from "uuid";
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -28,13 +28,66 @@ export interface TemplateInterface {
   height: number;
   imageUrl: string;
 }
+export interface LayerInterface {
+  id: number;
+  name: string;
+  advances: number;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  angle: number;
+  imageURL: null;
+  maskURL: null;
+  templateID: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface FabricObjectInterface {
+  id: number;
+  name: string;
+}
+
 export default function EditTemplate(props: { id: string }) {
   const [template, setTemplate] = React.useState<TemplateInterface>({} as TemplateInterface);
   const id_current = React.useRef(null);
   const [newFabricCanvas, setnewFabricCanvas] = React.useState<fabric.Canvas | null>(null);
-  const [listLayer, setListLayer] = React.useState([{}]);
-  const [changeType, setChangeType] = React.useState(null)
+  const [listLayer, setListLayer] = React.useState<LayerInterface[]>([{}] as LayerInterface[]);
+  const [changeType, setChangeType] = React.useState<string | null>(null);
+  const [currentLayer, setCurrentLayer] = React.useState<LayerInterface>({} as LayerInterface);
+  const handleCurrentSelectedLayer = (layerId: number) => {
+    const selectedLayer = listLayer.find((layer) => layer.id === layerId);
+    if (!selectedLayer) return;
+    setCurrentLayer(selectedLayer);
+  };
 
+  React.useEffect(() => {
+    newFabricCanvas?.on("selection:created", function (event) {
+      let selectedObjects = event.selected as unknown as FabricObjectInterface[];
+      if (selectedObjects?.length === 0) return;
+      handleCurrentSelectedLayer(selectedObjects?.[0]?.id);
+    });
+    newFabricCanvas?.on("selection:updated", function (event) {
+      let selectedObjects = event.selected as unknown as FabricObjectInterface[];
+
+      // Do something with the selected objects
+      if (selectedObjects?.length === 0) return;
+
+      handleCurrentSelectedLayer(selectedObjects[0].id);
+    });
+  }, [newFabricCanvas, listLayer]);
+
+  React.useEffect(() => {
+    if (currentLayer) {
+      if (currentLayer.name === "Image Placeholder") {
+        setChangeType("image");
+      }
+      if (currentLayer.name === "Clipart") {
+        setChangeType("clip-art");
+      }
+    }
+  }, [currentLayer]);
   React.useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/template/${props.id}`, {
       method: "GET",
@@ -67,44 +120,51 @@ export default function EditTemplate(props: { id: string }) {
       });
   }, [props.id, newFabricCanvas]);
 
-  const draw = (value) => {
+  const draw = (value: string) => {
+    const newId = uuidv4();
     const rect = new fabric.Rect({
       fill: "white",
       top: 100,
       left: 100,
       width: 200,
       height: 200,
-      name: "Image Placeholder"
-    });
+      name: "Image Placeholder",
+      id: newId,
+    } as unknown as fabric.IRectOptions);
     newFabricCanvas?.add(rect);
     const newListLayer = [
       ...listLayer,
       {
         name: "Image Placeholder",
+        id: newId,
       },
-    ];
+    ] as LayerInterface[];
     setListLayer(newListLayer);
-    setChangeType(value)
+    setChangeType(value);
   };
 
-  const drawClipArt = (value) => {
+  const drawClipArt = (value: string) => {
+    const newId = uuidv4();
+
     const rect = new fabric.Rect({
       fill: "white",
       top: 100,
       left: 100,
       width: 200,
       height: 200,
-      name: "Clipart"
-    });
+      name: "Clipart",
+      id: newId,
+    } as unknown as fabric.IRectOptions);
     newFabricCanvas?.add(rect);
     const newListLayer = [
       ...listLayer,
       {
         name: "Clipart",
+        id: newId,
       },
-    ];
+    ] as LayerInterface[];
     setListLayer(newListLayer);
-    setChangeType(value)
+    setChangeType(value);
   };
 
   const handleFormLayer = () => {
@@ -141,13 +201,21 @@ export default function EditTemplate(props: { id: string }) {
               <span className="">Layers</span>
             </div>
 
-            {changeType === 'image' ? listLayer.map((layer: any, index) => (
-              <div className="flex px-5 py-4 border" key={index}>
-                <span className="w-30">{index + 1}</span>
-                <span className="px-2">{layer.name}</span>
-              </div>
-            )) : listLayer.map((layer: any, index) => (
-              <div className="flex px-5 py-4 border" key={index}>
+            {listLayer.map((layer: LayerInterface, index) => (
+              <div
+                className={`flex px-5 py-4 border ${layer.id === currentLayer?.id && "text-white bg-black"} `}
+                key={index}
+                onClick={() => {
+                  const selectedObject = newFabricCanvas
+                    ?.getObjects()
+                    .find((object) => (object as unknown as FabricObjectInterface).id === layer.id);
+                  if (selectedObject) {
+                    newFabricCanvas?.setActiveObject(selectedObject);
+                    newFabricCanvas?.renderAll();
+                  }
+                  handleCurrentSelectedLayer(layer.id);
+                }}
+              >
                 <span className="w-30">{index + 1}</span>
                 <span className="px-2">{layer.name}</span>
               </div>
@@ -167,7 +235,11 @@ export default function EditTemplate(props: { id: string }) {
               <div className="px-3 py-3">
                 <div className="border w-20 h-20 rounded-lg flex justify-center items-center hover:bg-layer cursor-pointer">
                   <div className="text-center text-sm">
-                    <div onClick={() => { drawClipArt('clip-art') }}>
+                    <div
+                      onClick={() => {
+                        drawClipArt("clip-art");
+                      }}
+                    >
                       <FilterIcon></FilterIcon>
                     </div>
                     Clip art
@@ -175,7 +247,11 @@ export default function EditTemplate(props: { id: string }) {
                 </div>
               </div>
               <div className="px-3 py-3">
-                <button onClick={() => { draw('image') }}>
+                <button
+                  onClick={() => {
+                    draw("image");
+                  }}
+                >
                   <div className="border w-20 h-20 rounded-lg flex justify-center items-center hover:bg-layer cursor-pointer">
                     <div className="text-center text-sm">
                       <div>
@@ -189,23 +265,32 @@ export default function EditTemplate(props: { id: string }) {
             </div>
             <div className="py-4">
               <div className="px-3">
-
-                {changeType === "clip-art" ? <div>
-                  <div className="collapse-title min-h-0 bg-layer text-white p-3">Config</div>
-                  <span>Category</span>
-                  <input style={{
-                    border: "3px",
-                    borderColor: "black",
-                    padding: "3px",
-                    marginTop: '5px'
-                  }} type="text"></input>
-                  <span>Option</span>
-                  <input style={{
-                    border: '2px',
-                    padding: "3px",
-                    marginTop: '5px'
-                  }} type="number"></input>
-                </div> : <></>}
+                {changeType === "clip-art" ? (
+                  <div>
+                    <div className="collapse-title min-h-0 bg-layer text-white p-3">Config</div>
+                    <span>Category</span>
+                    <input
+                      style={{
+                        border: "3px",
+                        borderColor: "black",
+                        padding: "3px",
+                        marginTop: "5px",
+                      }}
+                      type="text"
+                    ></input>
+                    <span>Option</span>
+                    <input
+                      style={{
+                        border: "2px",
+                        padding: "3px",
+                        marginTop: "5px",
+                      }}
+                      type="number"
+                    ></input>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
             <div className="px-3 position-absolute">

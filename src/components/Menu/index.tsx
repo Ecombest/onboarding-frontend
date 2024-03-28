@@ -33,14 +33,14 @@ export default function MenuBar() {
                 </Link>
               </ListItem>
               <ListItem disablePadding>
-                {/* <Link href="/listTemplate"> */}
-                <ListItemButton>
-                  <ListItemIcon>
-                    <FilterIcon></FilterIcon>
-                  </ListItemIcon>
-                  <ListItemText primary={"Clip arts"} />
-                </ListItemButton>
-                {/* </Link> */}
+                <Link href="/categories">
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <FilterIcon></FilterIcon>
+                    </ListItemIcon>
+                    <ListItemText primary={"Categories"} />
+                  </ListItemButton>
+                </Link>
               </ListItem>
               <ListItem disablePadding>
                 <Link href="/listOptionSet">
