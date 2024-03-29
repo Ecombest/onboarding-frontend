@@ -53,8 +53,8 @@ export interface LayerInterface {
   templateID: number;
   createdAt: Date;
   updatedAt: Date;
-  nameCategory: string;
-  idCategory: string;
+  categoryName: string;
+  categoryId: string;
 }
 
 export interface FabricObjectInterface {
@@ -199,8 +199,8 @@ export default function EditTemplate(props: { id: string }) {
       if (layer.id === currentLayer.id) {
         return {
           ...layer,
-          idCategory: category._id,
-          nameCategory: category.name,
+          categoryId: category._id,
+          categoryName: category.name,
         };
       }
       return layer;
@@ -225,16 +225,15 @@ export default function EditTemplate(props: { id: string }) {
       name: item.name,
       angle: Number(0),
     }));
-    console.log(newForm);
-    // fetch(`${process.env.NEXT_PUBLIC_API_URL}/layer/list`, {
-    //   method: "POST",
-    //   headers: {
-    //     "content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(newForm),
-    // }).then(() => {
-    //   toast.success("Create successfull !");
-    // });
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/layer/list`, {
+      method: "POST",
+      headers: {
+        "content-Type": "application/json",
+      },
+      body: JSON.stringify(newForm),
+    }).then(() => {
+      toast.success("Create successfull !");
+    });
   };
 
   const showModalCate = () => {
@@ -332,7 +331,7 @@ export default function EditTemplate(props: { id: string }) {
                       type="text"
                       placeholder="Select category"
                       onClick={showModalCate}
-                      value={currentLayer.nameCategory || ""}
+                      value={currentLayer.categoryName || ""}
                     ></input>
                   </div>
                 ) : (

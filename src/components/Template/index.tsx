@@ -10,6 +10,7 @@ import { styled } from "@mui/material/styles";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { TemplateInterface } from "./editTemplate";
+import Loading from "../Loading";
 
 const style = {
   position: "absolute" as "absolute",
@@ -83,6 +84,7 @@ export default function AddTemplate(props: { setIsRefesh: React.Dispatch<React.S
   };
 
   const router = useRouter();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const showModal = () => {
     setIsShowModal(true);
@@ -100,6 +102,7 @@ export default function AddTemplate(props: { setIsRefesh: React.Dispatch<React.S
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true)
     if (!file) {
       toast.error("Please upload image !");
       return;
@@ -128,6 +131,9 @@ export default function AddTemplate(props: { setIsRefesh: React.Dispatch<React.S
       })
       .catch((error) => {
         console.error("Error:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
     setIsShowModal(false);
   };
@@ -278,6 +284,7 @@ export default function AddTemplate(props: { setIsRefesh: React.Dispatch<React.S
           </button>
         </Box>
       </Modal>
+      {isLoading && <Loading />}
     </div>
   );
 }
