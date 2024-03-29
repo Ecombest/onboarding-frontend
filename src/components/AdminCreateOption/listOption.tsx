@@ -161,6 +161,13 @@ export default function ListOption(props: {
     if (!isShowModalCreate) {
       setFormAd(formAdDefaultValue);
       setFile(null);
+      setListFunction([
+        {
+          id: uuid(),
+          type: "image_upload",
+          layerId: "",
+        },
+      ] as FunctionInterface[]);
     }
   }, [isShowModalCreate]);
 
@@ -360,10 +367,7 @@ export default function ListOption(props: {
   };
 
   const handleUpdateOption = async (option: any) => {
-    if (!file) return;
-
     setIsLoading(true);
-    const imageUrl = await uploadFile(file);
     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/option/${option.id}`, {
       method: "PUT",
       headers: {
@@ -372,7 +376,6 @@ export default function ListOption(props: {
       body: JSON.stringify({
         ...optionCur,
         setID: props.id,
-        imageUrl: imageUrl,
       }),
     })
       .then((e) => {
@@ -747,61 +750,6 @@ export default function ListOption(props: {
                 value={optionCur?.helpText}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
               ></textarea>
-            </div>
-            <div className="py-2">
-              {!file ? (
-                <Button component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<ImageIcon />}>
-                  Upload image
-                  <VisuallyHiddenInput
-                    name="file"
-                    onChange={handleFileChange}
-                    type="file"
-                    accept="image/png, image/jpeg"
-                  />
-                </Button>
-              ) : (
-                <div
-                  style={{
-                    position: "relative",
-                  }}
-                >
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt="image"
-                    style={{
-                      width: "auto",
-                      height: "auto",
-                      maxWidth: "200px",
-                      maxHeight: "200px",
-                      position: "relative",
-                      top: "0",
-                      left: "50%",
-                      transform: "translate(-50%,0)",
-                    }}
-                  />
-                  <span
-                    style={{
-                      position: "absolute",
-                      right: "-5px",
-                      top: "0px",
-                      color: "red",
-                      cursor: "pointer",
-                      fontSize: "24px",
-                      fontFamily: "Arial",
-                    }}
-                    onClick={() => {
-                      setFile(null);
-                      setFormAd({
-                        ...formAd,
-                        width: 0,
-                        height: 0,
-                      });
-                    }}
-                  >
-                    X
-                  </span>
-                </div>
-              )}
             </div>
             <fieldset
               // style="border:1px solid #999; border-radius:8px; box-shadow:0 0 8px #999;padding:6px;"

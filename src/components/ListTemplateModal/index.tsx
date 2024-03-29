@@ -25,6 +25,7 @@ const ListTemplateModal = (props: ListTemplateModalInterface) => {
   const { open, onClose, onSelect } = props;
   const [listTemplate, setListTemplate] = React.useState([]);
   const [listLayer, setListLayer] = React.useState([]);
+  const [selectedTemplateId, setSelectedTemplateId] = React.useState("");
   useEffect(() => {
     if (!open) return;
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/template`)
@@ -56,7 +57,12 @@ const ListTemplateModal = (props: ListTemplateModalInterface) => {
                   <span
                     key={index}
                     onClick={() => {
+                      setSelectedTemplateId(template.id);
                       handleShowLayers(template);
+                    }}
+                    style={{
+                      backgroundColor: `${selectedTemplateId === template.id ? "#80e8ff" : "white"}`,
+                      color: `${selectedTemplateId === template.id ? "white" : "black"}`,
                     }}
                     className="template-item"
                   >
