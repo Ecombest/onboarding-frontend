@@ -8,6 +8,7 @@ import BrushIcon from "@mui/icons-material/Brush";
 import SettingsIcon from "@mui/icons-material/Settings";
 import FilterIcon from "@mui/icons-material/Filter";
 import Link from "next/link";
+import BadgeIcon from '@mui/icons-material/Badge';
 
 export default function MenuBar() {
   return (
@@ -49,6 +50,16 @@ export default function MenuBar() {
                       <SettingsIcon></SettingsIcon>
                     </ListItemIcon>
                     <ListItemText primary={"Options"} />
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+              <ListItem disablePadding>
+                <Link href="/campaigns">
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <BadgeIcon></BadgeIcon>
+                    </ListItemIcon>
+                    <ListItemText primary={"Campaigns"} />
                   </ListItemButton>
                 </Link>
               </ListItem>

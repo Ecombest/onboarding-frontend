@@ -597,70 +597,6 @@ export default function ListOption(props: {
                 </button>
               </div>
             </fieldset>
-            {/* <fieldset
-                            // style="border:1px solid #999; border-radius:8px; box-shadow:0 0 8px #999;padding:6px;"
-                            style={{
-                                border: "1px solid #999",
-                                borderRadius: "8px",
-                                padding: "16px",
-                            }}
-                        >
-                            <legend>Swatchs</legend>
-                            <div className="flex flex-col">
-                                {listFunction.map((item) => (
-                                    <div key={item.id} className="flex flex-row position-relavtive">
-                                        <div>
-                                            <label>Value Name:</label>
-                                            <input
-                                                name="name"
-                                                type="text"
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-50 p-2.5"
-                                                placeholder="value name"
-                                            ></input>
-                                        </div>
-                                        <div className="margin-left">
-                                            <label>Color:</label>
-                                            <input
-                                                name="color"
-                                                type="text"
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-50 p-2.5"
-                                                placeholder="color"
-                                            ></input>
-                                        </div>
-                                        <div>
-                                            <Button style={{
-                                                marginTop: "33px",
-                                                marginLeft: "30px"
-                                            }} component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<ImageIcon />}>
-                                                Upload image
-                                                <VisuallyHiddenInput
-                                                    name="file"
-                                                    onChange={handleFileChange}
-                                                    type="file"
-                                                    accept="image/png, image/jpeg"
-                                                />
-                                            </Button>
-                                        </div>
-                                        <span
-                                            style={{
-                                                color: "red",
-                                                cursor: "pointer",
-                                                fontSize: "24px",
-                                                fontFamily: "Arial",
-                                                marginLeft: "10px",
-                                                marginTop: "32px",
-                                            }}
-                                            onClick={() => deleteFuncCurCreate(item)}
-                                        >X</span>
-                                    </div>
-                                ))}
-                                <div className="py-2">
-                                    <button onClick={addFunction} className="flex bg-blue-500 text-white px-4 py-2 border rounded-md">
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </fieldset> */}
           </Typography>
           <button
             style={{
@@ -820,70 +756,6 @@ export default function ListOption(props: {
                 </button>
               </div>
             </fieldset>
-            {/* <fieldset
-                            // style="border:1px solid #999; border-radius:8px; box-shadow:0 0 8px #999;padding:6px;"
-                            style={{
-                                border: "1px solid #999",
-                                borderRadius: "8px",
-                                padding: "16px",
-                            }}
-                        >
-                            <legend>Swatchs</legend>
-                            <div className="flex flex-col">
-                                {listFunction.map((item) => (
-                                    <div key={item.id} className="flex flex-row position-relavtive">
-                                        <div>
-                                            <label>Value Name:</label>
-                                            <input
-                                                name="name"
-                                                type="text"
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-50 p-2.5"
-                                                placeholder="value name"
-                                            ></input>
-                                        </div>
-                                        <div className="margin-left">
-                                            <label>Color:</label>
-                                            <input
-                                                name="color"
-                                                type="text"
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-50 p-2.5"
-                                                placeholder="color"
-                                            ></input>
-                                        </div>
-                                        <div>
-                                            <Button style={{
-                                                marginTop: "33px",
-                                                marginLeft: "30px"
-                                            }} component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<ImageIcon />}>
-                                                Upload image
-                                                <VisuallyHiddenInput
-                                                    name="file"
-                                                    onChange={handleFileChange}
-                                                    type="file"
-                                                    accept="image/png, image/jpeg"
-                                                />
-                                            </Button>
-                                        </div>
-                                        <span
-                                            style={{
-                                                color: "red",
-                                                cursor: "pointer",
-                                                fontSize: "24px",
-                                                fontFamily: "Arial",
-                                                marginLeft: "10px",
-                                                marginTop: "32px",
-                                            }}
-                                            onClick={() => deleteFuncCurCreate(item)}
-                                        >X</span>
-                                    </div>
-                                ))}
-                                <div className="py-2">
-                                    <button onClick={addFunction} className="flex bg-blue-500 text-white px-4 py-2 border rounded-md">
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        </fieldset> */}
           </Typography>
           <button
             style={{
@@ -1190,11 +1062,10 @@ const PreviewTemplateModal = (props: {
                 height={template.height}
                 style={{
                   transformOrigin: "0 0",
-                  transform: `scale(${
-                    FIX_BOUNDING_BOX.width / template.width > FIX_BOUNDING_BOX.height / template.height
+                  transform: `scale(${FIX_BOUNDING_BOX.width / template.width > FIX_BOUNDING_BOX.height / template.height
                       ? FIX_BOUNDING_BOX.height / template.height
                       : FIX_BOUNDING_BOX.width / template.width
-                  })`,
+                    })`,
                 }}
               ></canvas>
             )}
