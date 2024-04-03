@@ -28,7 +28,7 @@ const getLayer = async (templateId) => {
     return response;
   });
   return response.json();
-}
+};
 
 const getOption = async (optionSetId) => {
   const response = await fetch(`http://192.168.1.222:3000/option/set/${optionSetId}`).then((response) => {
@@ -38,10 +38,10 @@ const getOption = async (optionSetId) => {
     return response;
   });
   return response.json();
-}
+};
 
 const getFunc = async (options) => {
-  const response = await fetch(`http://192.168.1.222:3000/function/option-ids`,{
+  const response = await fetch(`http://192.168.1.222:3000/function/option-ids`, {
     method: "POST",
     headers: {
       "content-Type": "application/json",
@@ -56,20 +56,20 @@ const getFunc = async (options) => {
     return response;
   });
   return response.json();
-}
+};
 
 const main = async () => {
   const campaign = await fetchCampaign(8);
   const template = await getTemplateById(campaign.templateId);
   const layer = await getLayer(campaign.templateId);
-  const options = await getOption(campaign.optionSetId)
-  const func = await getFunc(options)
+  const options = await getOption(campaign.optionSetId);
+  const func = await getFunc(options);
   return {
     campaign: campaign,
     template: template,
     layer: layer,
     options: options,
-    func: func
+    func: func,
   };
 };
 
@@ -80,15 +80,15 @@ const main = async () => {
 
   canvasTag = document.createElement("canvas");
   canvasTag.id = "canvas";
-  optionTag = document.createElement("div")
-  optionTag.id = "option"
+  optionTag = document.createElement("div");
+  optionTag.id = "option";
 
   objectRes = await main();
-  template = objectRes.template
-  layers = objectRes.layer
-  options = objectRes.options
-  funcs = objectRes.func
-  campaign = objectRes.campaign
+  template = objectRes.template;
+  layers = objectRes.layer;
+  options = objectRes.options;
+  funcs = objectRes.func;
+  campaign = objectRes.campaign;
   // console.log(campaign);
   if (template.width > template.height) {
     if (template.width > MAX_DIMENSION) {
@@ -144,7 +144,7 @@ const main = async () => {
   canvasContainer.transform = `scale(0.5)`;
   canvasContainer.width = template.width;
   canvasContainer.height = template.height;
-  
+
   layers.forEach((currentLayer) => {
     fabric.Image.fromURL(template.imageUrl, function (oImg) {
       const { width, height } = oImg.getOriginalSize();
@@ -159,8 +159,29 @@ const main = async () => {
   optionTag.style = {
     width: "600px",
     height: "200px",
-    border: "1px solid black"
-  }
-  container.appendChild(optionTag)
+    border: "1px solid black",
+  };
+  container.appendChild(optionTag);
   canvasImg?.renderAll();
+  const tag = document.getElementsByTagName("personalize-form")[0];
+  const optionListTag = document.createElement("div");
+  optionListTag.id = "option-list";
+  optionListTag.type = "file";
+
+  [1, 2, 3, 4, 5].map((item) => {
+    const option = document.createElement("span");
+    option.innerHTML = item;
+    optionListTag.appendChild(option);
+  });
+  tag.appendChild(optionListTag);
+  function submitHandler() {
+    console.log("submit");
+  }
+  const button = document.createElement("button");
+  button.innerHTML = "Submit";
+  button.onclick = submitHandler;
+  //   button.addEventListener("click", () => {
+  //     console.log("submit");
+  //   });
+  tag.appendChild(button);
 })();
