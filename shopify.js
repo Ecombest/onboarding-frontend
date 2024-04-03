@@ -147,9 +147,13 @@ const main = async () => {
 
   canvasImg?.renderAll();
   const tag = document.getElementsByTagName("personalize-form")[0];
-  const optionListTag = document.createElement("input");
+  tag.style.display = "flex";
+  tag.style.flexDirection = "row";
+  tag.style.justifyContent = "space-between";
+  tag.style.alignItems = "center";
+  const optionListTag = document.createElement("div");
   optionListTag.id = "option-list";
-  optionListTag.type = "file";
+  tag.appendChild(optionListTag);
 
   function draw(optionId, file) {
     const listCurrentFunction = funcs.filter((func) => func.optionId === optionId).map((func) => func.layerId);
@@ -173,25 +177,46 @@ const main = async () => {
   canvasImg?.renderAll();
 
   options.map((item) => {
+    const optionOverlay = document.createElement("div");
+    const optionTextGroup = document.createElement("div");
+    const optionTitle = document.createElement("h3");
+    optionTitle.style.margin = "0";
+    optionTitle.innerText = item.label;
+    optionTextGroup.appendChild(optionTitle);
+    const optionDescription = document.createElement("p");
+    optionDescription.style.margin = "0";
+    optionDescription.innerHTML = item.helpText;
+    optionTextGroup.appendChild(optionDescription);
+    optionOverlay.appendChild(optionTextGroup);
+    optionOverlay.style.width = "300px";
+    optionOverlay.style.display = "flex";
+    optionOverlay.style.justifyContent = "space-between";
+    optionOverlay.style.alignItems = "center";
+    optionOverlay.style.padding = "10px";
+    optionOverlay.style.border = "1px dashed #000";
+    optionOverlay.style.marginBottom = "10px";
+    optionOverlay.style.borderRadius = "5px";
+
     const option = document.createElement("label");
-    option.innerText = "Chosse Image"
-    option.style = {
-      width: "max-content",
-      height: "max-content",
-      cursor: "pointer",
-      padding: "10px 18px",
-      display: "block",
-      backgroundColor: "#000",
-      color: "#fff",
-      borderRadius: "5px",
-    }
-    const optionListTag = document.createElement("input");
-    optionListTag.id = "option-list";
-    optionListTag.type = "file";
-    tag.appendChild(option)
-    tag.appendChild(optionListTag);
-    optionListTag.onchange = (e) => {
+    option.innerText = "Chose Image";
+    option.htmlFor = item.id;
+    option.style.width = "max-content";
+    option.style.height = "max-content";
+    option.style.cursor = "pointer";
+    option.style.padding = "10px 18px";
+    option.style.display = "block";
+    option.style.backgroundColor = "#000";
+    option.style.color = "#fff";
+    option.style.borderRadius = "5px";
+    const optionInput = document.createElement("input");
+    optionInput.id = item.id;
+    optionInput.type = "file";
+    optionInput.style.display = "none";
+    optionOverlay.appendChild(option);
+    optionOverlay.appendChild(optionInput);
+    optionInput.onchange = (e) => {
       draw(item.id, e.target.files?.[0]);
-    }
-  })
+    };
+    optionListTag.appendChild(optionOverlay);
+  });
 })();
