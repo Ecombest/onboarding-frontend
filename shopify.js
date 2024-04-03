@@ -145,43 +145,53 @@ const main = async () => {
   canvasContainer.width = template.width;
   canvasContainer.height = template.height;
 
-  layers.forEach((currentLayer) => {
-    fabric.Image.fromURL(template.imageUrl, function (oImg) {
-      const { width, height } = oImg.getOriginalSize();
-      oImg.scaleX = currentLayer.width / width;
-      oImg.scaleY = currentLayer.height / height;
-      oImg.top = currentLayer.top;
-      oImg.left = currentLayer.left;
-      oImg.selectable = false;
-      canvasImg.add(oImg);
-    });
-  });
-  optionTag.style = {
-    width: "600px",
-    height: "200px",
-    border: "1px solid black",
-  };
-  container.appendChild(optionTag);
   canvasImg?.renderAll();
   const tag = document.getElementsByTagName("personalize-form")[0];
-  const optionListTag = document.createElement("div");
+  const optionListTag = document.createElement("input");
   optionListTag.id = "option-list";
   optionListTag.type = "file";
 
-  [1, 2, 3, 4, 5].map((item) => {
-    const option = document.createElement("span");
-    option.innerHTML = item;
-    optionListTag.appendChild(option);
-  });
-  tag.appendChild(optionListTag);
-  function submitHandler() {
-    console.log("submit");
+  function draw(optionId, file) {
+    const listCurrentFunction = funcs.filter((func) => func.optionId === optionId).map((func) => func.layerId);
+    const listCurrentLayer = layers.filter((layer) => listCurrentFunction.includes(layer.id));
+    if (!file) {
+      return;
+    } else {
+      listCurrentLayer.forEach((currentLayer) => {
+        fabric.Image.fromURL(URL.createObjectURL(file), function (oImg) {
+          const { width, height } = oImg.getOriginalSize();
+          oImg.scaleX = currentLayer.width / width;
+          oImg.scaleY = currentLayer.height / height;
+          oImg.top = currentLayer.top;
+          oImg.left = currentLayer.left;
+          oImg.selectable = false;
+          canvasImg.add(oImg);
+        });
+      });
+    }
   }
-  const button = document.createElement("button");
-  button.innerHTML = "Submit";
-  button.onclick = submitHandler;
-  //   button.addEventListener("click", () => {
-  //     console.log("submit");
-  //   });
-  tag.appendChild(button);
+  canvasImg?.renderAll();
+
+  options.map((item) => {
+    const option = document.createElement("label");
+    option.innerText = "Chosse Image"
+    option.style = {
+      width: "max-content",
+      height: "max-content",
+      cursor: "pointer",
+      padding: "10px 18px",
+      display: "block",
+      backgroundColor: "#000",
+      color: "#fff",
+      borderRadius: "5px",
+    }
+    const optionListTag = document.createElement("input");
+    optionListTag.id = "option-list";
+    optionListTag.type = "file";
+    tag.appendChild(option)
+    tag.appendChild(optionListTag);
+    optionListTag.onchange = (e) => {
+      draw(item.id, e.target.files?.[0]);
+    }
+  })
 })();
