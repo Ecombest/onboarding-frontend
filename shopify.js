@@ -1,6 +1,6 @@
 let campaign;
 let template;
-const MAX_DIMENSION = 800;
+const MAX_DIMENSION = 600;
 const fetchCampaign = async (campaignId) => {
   const response = await fetch(`http://192.168.1.222:3000/campaign/${campaignId}`).then((response) => {
     if (!response.ok) {
@@ -58,8 +58,8 @@ const getFunc = async (options) => {
   return response.json();
 };
 
-const main = async () => {
-  const campaign = await fetchCampaign(8);
+const main = async (campaignId) => {
+  const campaign = await fetchCampaign(campaignId);
   const template = await getTemplateById(campaign.templateId);
   const layer = await getLayer(campaign.templateId);
   const options = await getOption(campaign.optionSetId);
@@ -73,23 +73,45 @@ const main = async () => {
   };
 };
 
-(async () => {
-  let width;
-  let height;
-  let canvasTag;
+async function draw(optionId, file, canvasImg) {
+  const listCurrentFunction = funcs.filter((func) => func.optionId === optionId).map((func) => func.layerId);
+  const listCurrentLayer = layers.filter((layer) => listCurrentFunction.includes(layer.id));
+  if (!file) {
+    return;
+  } else {
+    for (const currentLayer of listCurrentLayer) {
+      const img = await new Promise((resolve, reject) => {
+        fabric.Image.fromURL(URL.createObjectURL(file), (img) => {
+          img.scaleX = currentLayer.width / img.width;
+          img.scaleY = currentLayer.height / img.height;
+          img.top = currentLayer.top;
+          img.left = currentLayer.left;
+          canvasImg.add(img);
+          // canvasImg.sendToBack(img);
+          canvasImg?.renderTop();
+          resolve(img);
+        });
+      });
+    }
+  }
+}
+async function render(objectRes, canvasTag) {
+  const tag = document.getElementById("content");
+  if (!objectRes) return;
 
-  canvasTag = document.createElement("canvas");
-  canvasTag.id = "canvas";
-  optionTag = document.createElement("div");
-  optionTag.id = "option";
-
-  objectRes = await main();
   template = objectRes.template;
   layers = objectRes.layer;
   options = objectRes.options;
   funcs = objectRes.func;
   campaign = objectRes.campaign;
-  // console.log(campaign);
+  const container = document.createElement("div");
+  container.id = "container";
+  container.style.width = `${MAX_DIMENSION}px`;
+  container.style.height = `${MAX_DIMENSION}px`;
+  container.style.overflow = "hidden";
+  tag.appendChild(container);
+  container.appendChild(canvasTag);
+
   if (template.width > template.height) {
     if (template.width > MAX_DIMENSION) {
       width = MAX_DIMENSION;
@@ -98,14 +120,6 @@ const main = async () => {
       width = template.width;
       height = template.height;
     }
-    const tag = document.getElementsByTagName("personalize-form")[0];
-    const container = document.createElement("div");
-    container.id = "container";
-    container.style.width = `${width}px`;
-    container.style.height = `${height}px`;
-    container.style.overflow = "hidden";
-    tag.appendChild(container);
-    container.appendChild(canvasTag);
   } else {
     if (template.height > MAX_DIMENSION) {
       height = MAX_DIMENSION;
@@ -114,39 +128,28 @@ const main = async () => {
       width = template.width;
       height = template.height;
     }
-    const tag = document.getElementsByTagName("personalize-form")[0];
-    const container = document.createElement("div");
-    container.id = "container";
-
-    container.style.width = `${width}px`;
-    container.style.height = `${height}px`;
-    container.style.overflow = "hidden";
-    tag.appendChild(container);
-    container.appendChild(canvasTag);
   }
-  canvasTag.width = width;
-  canvasTag.height = height;
+  const canvasImg = await new fabric.Canvas(canvasTag.id);
 
-  const canvasImg = new fabric.Canvas(canvasTag.id);
-  fabric.Image.fromURL(template.imageUrl, (oImg) => {
-    const { width, height } = oImg.getOriginalSize();
-    oImg.selectable = false;
-    oImg.scaleX = template.width / width;
-    oImg.scaleY = template.height / height;
-    canvasImg.add(oImg);
-    canvasImg.sendToBack(oImg);
+  const upperCanvas = canvasImg.upperCanvasEl;
+
+  const oImg = await new Promise((resolve, reject) => {
+    fabric.Image.fromURL(template.imageUrl, (img) => {
+      resolve(img);
+    });
   });
 
-  // canvasImg?.renderAll();
-  const canvasContainer = document.getElementsByClassName("canvas-container")[0];
+  const { width: OImgWidth, height: OImgHeight } = oImg.getOriginalSize();
+  oImg.selectable = false;
+  oImg.scaleX = template.width / OImgWidth;
+  oImg.scaleY = template.height / OImgHeight;
 
-  canvasContainer.style.transformOrigin = "0 0";
-  canvasContainer.transform = `scale(0.5)`;
-  canvasContainer.width = template.width;
-  canvasContainer.height = template.height;
+  canvasImg.setWidth(OImgWidth);
+  canvasImg.setHeight(OImgHeight);
 
-  canvasImg?.renderAll();
-  const tag = document.getElementsByTagName("personalize-form")[0];
+  canvasImg.add(oImg);
+  canvasImg.sendToBack(oImg);
+
   tag.style.display = "flex";
   tag.style.flexDirection = "row";
   tag.style.justifyContent = "space-between";
@@ -154,27 +157,6 @@ const main = async () => {
   const optionListTag = document.createElement("div");
   optionListTag.id = "option-list";
   tag.appendChild(optionListTag);
-
-  function draw(optionId, file) {
-    const listCurrentFunction = funcs.filter((func) => func.optionId === optionId).map((func) => func.layerId);
-    const listCurrentLayer = layers.filter((layer) => listCurrentFunction.includes(layer.id));
-    if (!file) {
-      return;
-    } else {
-      listCurrentLayer.forEach((currentLayer) => {
-        fabric.Image.fromURL(URL.createObjectURL(file), function (oImg) {
-          const { width, height } = oImg.getOriginalSize();
-          oImg.scaleX = currentLayer.width / width;
-          oImg.scaleY = currentLayer.height / height;
-          oImg.top = currentLayer.top;
-          oImg.left = currentLayer.left;
-          oImg.selectable = false;
-          canvasImg.add(oImg);
-        });
-      });
-    }
-  }
-  canvasImg?.renderAll();
 
   options.map((item) => {
     const optionOverlay = document.createElement("div");
@@ -198,7 +180,7 @@ const main = async () => {
     optionOverlay.style.borderRadius = "5px";
 
     const option = document.createElement("label");
-    option.innerText = "Chose Image";
+    option.innerText = "Choose Image";
     option.htmlFor = item.id;
     option.style.width = "max-content";
     option.style.height = "max-content";
@@ -214,9 +196,48 @@ const main = async () => {
     optionInput.style.display = "none";
     optionOverlay.appendChild(option);
     optionOverlay.appendChild(optionInput);
-    optionInput.onchange = (e) => {
-      draw(item.id, e.target.files?.[0]);
+    optionInput.onchange = async (e) => {
+      await draw(item.id, e.target.files?.[0], canvasImg);
     };
     optionListTag.appendChild(optionOverlay);
+    canvasImg?.renderAll();
+
+    const canvasContainer = document.getElementsByClassName("canvas-container")[0];
+    canvasContainer.style.transformOrigin = "0 0";
+    canvasContainer.style.transform = `scale(${width / template.width})`;
   });
+}
+
+(async () => {
+  let canvasTag;
+  let objectRes;
+  const tag = document.getElementsByTagName("personalize-form")[0];
+  const contentTag = document.createElement("div");
+  contentTag.id = "content";
+
+  canvasTag = document.createElement("canvas");
+  canvasTag.id = "canvas";
+  const campaignInput = document.createElement("input");
+  campaignInput.id = "campaign";
+  campaignInput.type = "text";
+  campaignInput.placeholder = "Campaign ID";
+  campaignInput.style.width = "300px";
+  campaignInput.style.height = "30px";
+  campaignInput.style.margin = "10px";
+  campaignInput.style.padding = "10px";
+  campaignInput.style.border = "1px solid #000";
+  campaignInput.style.borderRadius = "5px";
+  campaignInput.style.fontSize = "16px";
+  campaignInput.style.outline = "none";
+  campaignInput.style.boxShadow = "0 0 5px rgba(0,0,0,0.1)";
+  campaignInput.onchange = async (e) => {
+    contentTag.innerHTML = "";
+    if (!e.target.value) return;
+    objectRes = await main(e.target.value);
+    render(objectRes, canvasTag);
+  };
+  tag.appendChild(campaignInput);
+  tag.appendChild(contentTag);
+
+  //   optionTag.appendChild(campaignInput);
 })();
