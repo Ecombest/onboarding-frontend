@@ -1,8 +1,13 @@
 let campaign;
 let template;
 const MAX_DIMENSION = 600;
+const domain = "https://singular-carefully-mink.ngrok-free.app";
 const fetchCampaign = async (campaignId) => {
-  const response = await fetch(`http://192.168.1.222:3000/campaign/${campaignId}`).then((response) => {
+  const response = await fetch(`${domain}/campaign/${campaignId}`, {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
+  }).then((response) => {
     if (!response.ok) {
       throw new Error("Failed to fetch campaign");
     }
@@ -11,7 +16,11 @@ const fetchCampaign = async (campaignId) => {
   return response.json();
 };
 const getTemplateById = async (id) => {
-  const response = await fetch(`http://192.168.1.222:3000/template/${id}`).then((response) => {
+  const response = await fetch(`${domain}/template/${id}`, {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
+  }).then((response) => {
     if (!response.ok) {
       throw new Error("Failed to fetch template");
     }
@@ -21,7 +30,11 @@ const getTemplateById = async (id) => {
 };
 
 const getLayer = async (templateId) => {
-  const response = await fetch(`http://192.168.1.222:3000/layer/template/${templateId}`).then((response) => {
+  const response = await fetch(`${domain}/layer/template/${templateId}`, {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
+  }).then((response) => {
     if (!response.ok) {
       throw new Error("Failed to fetch layer");
     }
@@ -31,7 +44,11 @@ const getLayer = async (templateId) => {
 };
 
 const getOption = async (optionSetId) => {
-  const response = await fetch(`http://192.168.1.222:3000/option/set/${optionSetId}`).then((response) => {
+  const response = await fetch(`${domain}/option/set/${optionSetId}`, {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
+  }).then((response) => {
     if (!response.ok) {
       throw new Error("Failed to fetch option");
     }
@@ -41,10 +58,11 @@ const getOption = async (optionSetId) => {
 };
 
 const getFunc = async (options) => {
-  const response = await fetch(`http://192.168.1.222:3000/function/option-ids`, {
+  const response = await fetch(`${domain}/function/option-ids`, {
     method: "POST",
     headers: {
       "content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({
       optionIds: options.map((option) => option.id),
@@ -85,6 +103,7 @@ async function draw(optionId, file, canvasImg) {
           img.scaleX = currentLayer.width / img.width;
           img.scaleY = currentLayer.height / img.height;
           img.top = currentLayer.top;
+          img.selectable = false;
           img.left = currentLayer.left;
           canvasImg.add(img);
           // canvasImg.sendToBack(img);
@@ -130,9 +149,6 @@ async function render(objectRes, canvasTag) {
     }
   }
   const canvasImg = await new fabric.Canvas(canvasTag.id);
-
-  const upperCanvas = canvasImg.upperCanvasEl;
-
   const oImg = await new Promise((resolve, reject) => {
     fabric.Image.fromURL(template.imageUrl, (img) => {
       resolve(img);
@@ -151,6 +167,7 @@ async function render(objectRes, canvasTag) {
   canvasImg.sendToBack(oImg);
 
   tag.style.display = "flex";
+  tag.style.maxWidth = "1000px";
   tag.style.flexDirection = "row";
   tag.style.justifyContent = "space-between";
   tag.style.alignItems = "center";

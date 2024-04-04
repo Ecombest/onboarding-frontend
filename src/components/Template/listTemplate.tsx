@@ -20,7 +20,11 @@ export default function ListTemplate(props: {
   const [templates, setTemplates] = React.useState<TemplateInterface[]>([]);
 
   React.useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/template`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/template`, {
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    })
       .then((res) => res.json())
       .then((templates) => {
         setTemplates(templates);
