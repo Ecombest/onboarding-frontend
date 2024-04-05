@@ -13142,17 +13142,23 @@ async function draw(optionId, file, canvasImg) {
   } else {
     for (const currentLayer of listCurrentLayer) {
       const img = await new Promise((resolve, reject) => {
-        fabric.Image.fromURL(URL.createObjectURL(file), (img) => {
-          img.scaleX = currentLayer.width / img.width;
-          img.scaleY = currentLayer.height / img.height;
-          img.top = currentLayer.top;
-          img.selectable = false;
-          img.left = currentLayer.left;
-          canvasImg.add(img);
-          // canvasImg.sendToBack(img);
-          canvasImg?.renderTop();
-          resolve(img);
-        });
+        fabric.Image.fromURL(
+          URL.createObjectURL(file),
+          (img) => {
+            img.scaleX = currentLayer.width / img.width;
+            img.scaleY = currentLayer.height / img.height;
+            img.top = currentLayer.top;
+            img.selectable = false;
+            img.left = currentLayer.left;
+            canvasImg.add(img);
+            // canvasImg.sendToBack(img);
+            canvasImg?.renderTop();
+            resolve(img);
+          },
+          {
+            crossOrigin: "Anonymous",
+          }
+        );
       });
     }
   }
@@ -13162,6 +13168,9 @@ async function render(objectRes, canvasTag) {
   const currentID = document.querySelector("personalize-form").getAttribute("product-id");
   if (objectRes.campaign.productId != currentID) return;
   const parentTag = document.querySelector(objectRes.campaign.selectorHtml);
+  parentTag.style.display = "flex";
+  parentTag.style.justifyContent = "center";
+
   parentTag.innerHTML = "";
   const tag = document.createElement("div");
   if (objectRes.campaign.selectorHtml.startsWith("#")) {
@@ -13207,9 +13216,15 @@ async function render(objectRes, canvasTag) {
   }
   const canvasImg = await new fabric.Canvas(canvasTag.id);
   const oImg = await new Promise((resolve, reject) => {
-    fabric.Image.fromURL(template.imageUrl, (img) => {
-      resolve(img);
-    });
+    fabric.Image.fromURL(
+      template.imageUrl,
+      (img) => {
+        resolve(img);
+      },
+      {
+        crossOrigin: "Anonymous",
+      }
+    );
   });
 
   const { width: OImgWidth, height: OImgHeight } = oImg.getOriginalSize();
@@ -13224,7 +13239,9 @@ async function render(objectRes, canvasTag) {
 
   canvasImg.add(oImg);
   canvasImg.sendToBack(oImg);
-
+  const canvasContainer = document.getElementsByClassName("canvas-container")[0];
+  canvasContainer.style.transformOrigin = "0 0";
+  canvasContainer.style.transform = `scale(${width / template.width})`;
   const optionListTag = document.createElement("div");
   optionListTag.id = "option-list";
   const optionTag = document.getElementsByTagName("personalize-form")[0];
@@ -13243,7 +13260,7 @@ async function render(objectRes, canvasTag) {
     optionDescription.innerHTML = item.helpText;
     optionTextGroup.appendChild(optionDescription);
     optionOverlay.appendChild(optionTextGroup);
-    optionOverlay.style.width = "300px";
+    optionOverlay.style.width = "100%";
     optionOverlay.style.display = "flex";
     optionOverlay.style.justifyContent = "space-between";
     optionOverlay.style.alignItems = "center";
@@ -13273,18 +13290,86 @@ async function render(objectRes, canvasTag) {
       await draw(item.id, e.target.files?.[0], canvasImg);
     };
     optionListTag.appendChild(optionOverlay);
-    // const element = document.querySelector(".canvas-container");
-    // if (element) {
-    //   element.classList.remove("canvas-container");
-    //   element.classList.add("canvas-container1");
-    // }
 
-    const canvasContainer = document.getElementsByClassName("canvas-container")[0];
-    canvasContainer.style.transformOrigin = "0 0";
-    console.log("asdasdas", width);
-    canvasContainer.style.transform = `scale(${width / template.width})`;
     canvasImg?.renderAll();
   });
+
+  const previewBtn = document.createElement("div");
+  previewBtn.innerText = "Preview";
+  previewBtn.style.width = "max-content";
+  previewBtn.style.height = "max-content";
+  previewBtn.style.cursor = "pointer";
+  previewBtn.style.padding = "10px 18px";
+  previewBtn.style.display = "block";
+  previewBtn.style.backgroundColor = "#000";
+  previewBtn.style.color = "#fff";
+  previewBtn.style.borderRadius = "5px";
+  previewBtn.style.marginTop = "10px";
+  previewBtn.onclick = async () => {
+    const modal = document.createElement("div");
+    modal.id = "modal";
+    modal.style.position = "fixed";
+    modal.style.top = "0";
+    modal.style.left = "0";
+    modal.style.width = "100%";
+    modal.style.height = "100%";
+    modal.style.backgroundColor = "rgba(0,0,0,0.5)";
+    modal.style.display = "flex";
+    modal.style.justifyContent = "center";
+    modal.style.alignItems = "center";
+    modal.style.zIndex = "999";
+    const modalContent = document.createElement("div");
+    modalContent.style.width = "500px";
+    modalContent.style.height = "max-content";
+    modalContent.style.backgroundColor = "#fff";
+    modalContent.style.borderRadius = "5px";
+    modalContent.style.display = "flex";
+    modalContent.style.flexDirection = "column";
+    modalContent.style.alignItems = "center";
+
+    modalContent.style.overflow = "hidden";
+    modalContent.style.position = "relative";
+    modal.appendChild(modalContent);
+    const canvas = document.getElementById("canvas");
+    if (!canvas) return;
+    const dataURL = canvas?.toDataURL("image/png");
+    const img = document.createElement("img");
+    img.src = dataURL;
+    img.style.width = "100%";
+    img.style.height = "auto";
+    modalContent.appendChild(img);
+
+    const downloadBtn = document.createElement("a");
+    downloadBtn.href = dataURL;
+    downloadBtn.download = "image.png";
+    downloadBtn.innerText = "Download";
+    downloadBtn.style.top = "10px";
+    downloadBtn.style.right = "10px";
+    downloadBtn.style.cursor = "pointer";
+    downloadBtn.style.padding = "10px 18px";
+    downloadBtn.style.backgroundColor = "#000";
+    downloadBtn.style.color = "#fff";
+    downloadBtn.style.borderRadius = "5px";
+    downloadBtn.style.marginBottom = " 20px";
+    modalContent.appendChild(downloadBtn);
+
+    const closeBtn = document.createElement("button");
+    closeBtn.innerText = "Close";
+    closeBtn.style.position = "absolute";
+    closeBtn.style.top = "10px";
+    closeBtn.style.right = "10px";
+    closeBtn.style.cursor = "pointer";
+    closeBtn.style.padding = "10px 18px";
+    closeBtn.style.backgroundColor = "#000";
+    closeBtn.style.color = "#fff";
+    closeBtn.style.borderRadius = "5px";
+    closeBtn.onclick = () => {
+      document.body.removeChild(document.getElementById("modal"));
+    };
+    modalContent.appendChild(closeBtn);
+    document.body.appendChild(modal);
+  };
+  optionListTag.appendChild(previewBtn);
 }
 
 (async () => {
