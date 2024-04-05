@@ -234,27 +234,10 @@ async function render(objectRes, canvasTag) {
 
   canvasTag = document.createElement("canvas");
   canvasTag.id = "canvas";
-  const campaignInput = document.createElement("input");
-  campaignInput.id = "campaign";
-  campaignInput.type = "text";
-  campaignInput.placeholder = "Campaign ID";
-  campaignInput.style.width = "300px";
-  campaignInput.style.height = "30px";
-  campaignInput.style.margin = "10px";
-  campaignInput.style.padding = "10px";
-  campaignInput.style.border = "1px solid #000";
-  campaignInput.style.borderRadius = "5px";
-  campaignInput.style.fontSize = "16px";
-  campaignInput.style.outline = "none";
-  campaignInput.style.boxShadow = "0 0 5px rgba(0,0,0,0.1)";
-  campaignInput.onchange = async (e) => {
-    contentTag.innerHTML = "";
-    if (!e.target.value) return;
-    objectRes = await main(e.target.value);
-    render(objectRes, canvasTag);
-  };
-  tag.appendChild(campaignInput);
   tag.appendChild(contentTag);
+
+  objectRes = await main(10);
+  await render(objectRes, canvasTag);
 
   //   optionTag.appendChild(campaignInput);
 })();
